@@ -5,5 +5,6 @@ add_subdirectory(${RobotSwarmAPI_SOURCE_DIR}/src)
 FILE(GLOB_RECURSE INCLUDE_ALL "include/*.h")
 include_directories(${RobotSwarmAPI_SOURCE_DIR}/include)
 link_directories(${RobotSwarmAPI_SOURCE_DIR}/src)
+
 add_executable(${PROJECT_NAME}_run ${SRC_LIST} ${INCLUDE_ALL})
 target_link_libraries(${PROJECT_NAME}_run ${PROJECT_NAME})
