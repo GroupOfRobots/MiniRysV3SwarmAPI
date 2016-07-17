@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "wifhandler.h"
+#include "wifihandler.h"
 #include "api.h"
 
 int main(int argc, char *argv[]) {
