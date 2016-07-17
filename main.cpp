@@ -1,7 +1,10 @@
-#include <iostream>
+#include <QCoreApplication>
+#include "wifhandler.h"
 #include "api.h"
 
 int main(int argc, char *argv[]) {
-    std::cout << "Hello iRys!" << std::endl;
+    QCoreApplication a(argc, argv);
+    irys::WifiHandler wifi;
+    a.exec();
     return 0;
 }
