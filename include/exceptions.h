@@ -32,6 +32,13 @@ public:
     { }
 };
 
+class WirelessDeviceNotFound : public RuntimeError {
+public:
+    WirelessDeviceNotFound()
+        : RuntimeError("No wireless device found")
+    { }
+};
+
 }
 
 #endif // EXCEPTIONS_H
