@@ -1,4 +1,4 @@
-#include "wifhandler.h"
+#include "wifihandler.h"
 
 irys::WifiHandler::WifiHandler()
     : m_NetworkManagerInterface(
