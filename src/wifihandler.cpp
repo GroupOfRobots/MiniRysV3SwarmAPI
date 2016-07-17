@@ -30,15 +30,13 @@ QDBusObjectPath irys::WifiHandler::findWirelessDeviceIn(QList<QDBusObjectPath> d
                                        device.path(),
                                        NM_DBUS_INTERFACE_DEVICE,
                                        QDBusConnection::systemBus());
-        QDBusReply<NMDeviceType> busReply = deviceInterface.call("DeviceType");
-        if (!busReply.isValid()) {
-            throw GetDeviceTypeUnsuccessful();
-        }
-        NMDeviceType deviceType = busReply.value();
+        QVariant busReply = deviceInterface.property("DeviceType");
+        int deviceType = qvariant_cast<int>(busReply);
         if (deviceType == NMDeviceType::NM_DEVICE_TYPE_WIFI) {
             return device;
         }
     }
+    throw WirelessDeviceNotFound();
 }
 
 irys::WifiHandler::~WifiHandler() { }
