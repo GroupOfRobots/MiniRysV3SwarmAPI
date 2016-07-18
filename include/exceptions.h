@@ -39,6 +39,13 @@ public:
     { }
 };
 
+class GetAllAccessPointsFailed : public RuntimeError {
+public:
+    GetAllAccessPointsFailed()
+        : RuntimeError("Unable to get list of available access points")
+    { }
+};
+
 }
 
 #endif // EXCEPTIONS_H

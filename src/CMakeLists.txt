@@ -1,3 +1,4 @@
+# search for source files in current dir
 aux_source_directory(. lib_SRC_LIST)
 
 # include include dir

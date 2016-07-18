@@ -7,12 +7,14 @@
 #include <QDBusReply>
 #include <QDebug>
 
+#include <memory>
 #include "exceptions.h"
 #include "nm-dbus-interface.h"
 
 Q_DECLARE_METATYPE(QList<QDBusObjectPath>)
 Q_DECLARE_METATYPE(NMDeviceType)
 Q_DECLARE_METATYPE(QDBusReply<NMDeviceType>)
+Q_DECLARE_METATYPE(QList<QString>)
 
 namespace irys {
 
@@ -22,13 +24,25 @@ public:
     WifiHandler();
     virtual ~WifiHandler();
 
-private:
-    QDBusInterface m_NetworkManagerInterface;
-    QDBusObjectPath m_wirelessDevicePath;
+    void scanForAccessPoints();
+    QList<QString> getFoundAccessPoints() const;
 
-    QDBusObjectPath recognizeWirelessDevicePath();
-    QList<QDBusObjectPath> getAllDevices();
-    QDBusObjectPath findWirelessDeviceIn(QList<QDBusObjectPath> devicesPaths);
+private:
+    std::unique_ptr<QDBusInterface> m_wirelessDeviceInterface;
+    QMap<QString, QDBusObjectPath> m_accessPoints; // <SSID, PATH>
+
+    void recognizeWirelessDevice();
+    QList<QDBusObjectPath> getAllDevices() const;
+    std::unique_ptr<QDBusInterface> getNetworkManagerInterface() const;
+    void findWirelessDeviceIn(const QList<QDBusObjectPath> &devicesPaths);
+    std::unique_ptr<QDBusInterface> getDeviceInterfaceFrom(const QDBusObjectPath &devicePath) const;
+    bool isWirelessDeviceInterface(std::unique_ptr<QDBusInterface> &deviceInterface) const;
+    int getDeviceTypeFrom(std::unique_ptr<QDBusInterface> &deviceInterface) const;
+    QVariant getDeviceTypePropertyFrom(std::unique_ptr<QDBusInterface> &deviceInterface) const;
+    std::unique_ptr<QDBusInterface> getWirelessDeviceInterfaceFrom(const QDBusObjectPath &devicePath) const;
+    std::unique_ptr<QDBusInterface> getAccessPointInterface(const QDBusObjectPath &accessPointPath) const;
+    QString getSsidFrom(std::unique_ptr<QDBusInterface> &accessPointInterface) const;
+    QVariant getSsidPropertyFrom(std::unique_ptr<QDBusInterface> &accessPointInterface) const;
 };
 
 }

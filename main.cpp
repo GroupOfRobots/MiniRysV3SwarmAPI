@@ -5,6 +5,7 @@
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
     irys::WifiHandler wifi;
-    a.exec();
+    wifi.scanForAccessPoints();
+    wifi.getFoundAccessPoints();
     return 0;
 }
