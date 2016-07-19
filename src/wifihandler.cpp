@@ -106,3 +106,55 @@ QList<QString> irys::WifiHandler::getFoundAccessPoints() const {
     }
     return ssids;
 }
+
+void irys::WifiHandler::connectToAccessPoint(const QString &ssid) {
+    std::unique_ptr<QDBusInterface> nmsettings(new QDBusInterface(NM_DBUS_SERVICE,
+                                                                  NM_DBUS_PATH_SETTINGS,
+                                                                  NM_DBUS_INTERFACE_SETTINGS,
+                                                                  QDBusConnection::systemBus()));
+    qDBusRegisterMetaType<Connection>();
+    /*Connection connection;
+    connection["connection"]["uuid"] = QUuid::createUuid().toString().remove('{').remove('}');
+    connection["connection"]["id"] = ssid;
+    connection["connection"]["autoconnect"] = "true";
+    // build up ipv4 settings
+    connection["ipv4"]["method"] = "auto";
+    // use IEEE 802-11 wireless standard
+    connection["connection"]["type"] = "802-11-wireless";
+    // build up the "802-11-wireless" setting
+    connection["802-11-wireless"];
+    // tell which ssid should be chosen
+    connection["802-11-wireless"]["ssid"] = ssid;
+    // choose connection mode - adhoc - connect to existing access point
+    //connection["802-11-wireless"]["mode"] = "adhoc";
+    // security wpa
+    //connection["802-11-wireless"]["security"] = "802-11-wireless-security";
+
+
+    // start the connection
+    QDBusReply<QDBusObjectPath> result = nmsettings->call("ActivateConnection",
+                                                          QVariant::fromValue(connection),
+                                                          m_wirelessDeviceInterface->path(),
+                                                          m_accessPoints[ssid].path());
+    if (result.isValid()) {
+        qDebug() << "Connected to: " << ssid;
+    }*/
+
+    // FOR NOW: reverse engineering to get how connections looks like
+    QDBusReply<QList<QDBusObjectPath>> result = nmsettings->call("ListConnections");
+    for (auto &el : result.value()) {
+        qDebug() << el.path();
+        QDBusInterface conn(NM_DBUS_SERVICE,
+                            el.path(),
+                            NM_DBUS_INTERFACE_SETTINGS_CONNECTION,
+                            QDBusConnection::systemBus());
+        QDBusReply<Connection> set = conn.call("GetSettings");
+        auto map = set.value();
+        for (auto &key1 : map.keys()) {
+            for(auto &key2 : map[key1].keys()) {
+                qDebug() << "[" << key1 << "][" << key2 << "] = " << map[key1][key2];
+            }
+        }
+    }
+
+}

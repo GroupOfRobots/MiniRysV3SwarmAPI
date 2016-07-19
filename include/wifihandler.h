@@ -5,12 +5,21 @@
 #include <QDBusInterface>
 #include <QDBusConnection>
 #include <QDBusReply>
+#include <QUuid>
 #include <QDebug>
+#include <QDBusMetaType>
+#include <QDBusArgument>
+#include <QNetworkConfiguration>
+#include <QNetworkConfigurationManager>
+#include <QNetworkSession>
 
 #include <memory>
 #include "exceptions.h"
 #include "nm-dbus-interface.h"
 
+
+using Connection = QMap<QString, QMap<QString, QVariant>>;
+Q_DECLARE_METATYPE(Connection)
 Q_DECLARE_METATYPE(QList<QDBusObjectPath>)
 Q_DECLARE_METATYPE(NMDeviceType)
 Q_DECLARE_METATYPE(QDBusReply<NMDeviceType>)
@@ -26,6 +35,7 @@ public:
 
     void scanForAccessPoints();
     QList<QString> getFoundAccessPoints() const;
+    void connectToAccessPoint(const QString &ssid);
 
 private:
     std::unique_ptr<QDBusInterface> m_wirelessDeviceInterface;
