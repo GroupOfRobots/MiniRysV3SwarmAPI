@@ -14,6 +14,7 @@ QList<QDBusObjectPath> irys::WifiHandler::getAllDevices() const {
     std::unique_ptr<QDBusInterface> NMInterface = getNetworkManagerInterface();
     QDBusReply<QList<QDBusObjectPath>> busReply = NMInterface->call("GetAllDevices");
     if (!busReply.isValid()) {
+        qDebug() << busReply.error().message();
         throw GetAllDevicesUnsuccessful();
     }
     return busReply.value();
@@ -73,6 +74,7 @@ void irys::WifiHandler::scanForAccessPoints() {
     m_wirelessDeviceInterface->call("RequestScan");
     QDBusReply<QList<QDBusObjectPath>> busReply = m_wirelessDeviceInterface->call("GetAllAccessPoints");
     if (!busReply.isValid()) {
+        qDebug() << busReply.error().message();
         throw GetAllAccessPointsFailed();
     }
     m_accessPoints.clear();
@@ -113,36 +115,44 @@ void irys::WifiHandler::connectToAccessPoint(const QString &ssid) {
                                                                   NM_DBUS_INTERFACE_SETTINGS,
                                                                   QDBusConnection::systemBus()));
     qDBusRegisterMetaType<Connection>();
-    /*Connection connection;
+
+
+    Connection connection;
     connection["connection"]["uuid"] = QUuid::createUuid().toString().remove('{').remove('}');
-    connection["connection"]["id"] = ssid;
-    connection["connection"]["autoconnect"] = "true";
+    connection["connection"]["id"] = "________test______id";
     // build up ipv4 settings
     connection["ipv4"]["method"] = "auto";
+    connection["ipv6"]["method"] = "auto";
     // use IEEE 802-11 wireless standard
     connection["connection"]["type"] = "802-11-wireless";
     // build up the "802-11-wireless" setting
-    connection["802-11-wireless"];
+    //connection["802-11-wireless"];
     // tell which ssid should be chosen
-    connection["802-11-wireless"]["ssid"] = ssid;
+    connection["802-11-wireless"]["ssid"] = "TP-LINK_CD5DC8";
     // choose connection mode - adhoc - connect to existing access point
-    //connection["802-11-wireless"]["mode"] = "adhoc";
-    // security wpa
-    //connection["802-11-wireless"]["security"] = "802-11-wireless-security";
-
+    connection["802-11-wireless"]["mode"] = "infrastructure";
+    connection["802-11-wireless"]["security"] = "802-11-wireless-security";
+    connection["802-11-wireless-security"]["key-mgmt"] = "wpa-eap";
+    connection["802-1x"]["eap"] = QVariant(QList<QString>({QStringLiteral("tls")}));
+    connection["802-1x"]["identity"] = "code with dbus";
+    connection["802-1x"]["private-key-password"] = "20520335";
 
     // start the connection
-    QDBusReply<QDBusObjectPath> result = nmsettings->call("ActivateConnection",
-                                                          QVariant::fromValue(connection),
-                                                          m_wirelessDeviceInterface->path(),
-                                                          m_accessPoints[ssid].path());
+    QDBusReply<QDBusObjectPath> result = nmsettings->call("AddConnection",
+                                                          QVariant::fromValue(connection)
+                                                          //m_wirelessDeviceInterface->path(),
+                                                          //m_accessPoints[ssid].path()
+                                                          );
     if (result.isValid()) {
         qDebug() << "Connected to: " << ssid;
-    }*/
-
+    } else {
+        qDebug() << result.error().message();
+    }
+/*
     // FOR NOW: reverse engineering to get how connections looks like
     QDBusReply<QList<QDBusObjectPath>> result = nmsettings->call("ListConnections");
     for (auto &el : result.value()) {
+        qDebug() << "\n-------------------------------------\n";
         qDebug() << el.path();
         QDBusInterface conn(NM_DBUS_SERVICE,
                             el.path(),
@@ -155,6 +165,13 @@ void irys::WifiHandler::connectToAccessPoint(const QString &ssid) {
                 qDebug() << "[" << key1 << "][" << key2 << "] = " << map[key1][key2];
             }
         }
-    }
-
+        qDebug() << "================ Secrets ================";
+        set = conn.call("GetSecrets");
+        map = set.value();
+        for (auto &key1 : map.keys()) {
+            for(auto &key2 : map[key1].keys()) {
+                qDebug() << "[" << key1 << "][" << key2 << "] = " << map[key1][key2];
+            }
+        }
+    }*/
 }
