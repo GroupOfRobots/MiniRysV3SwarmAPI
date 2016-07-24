@@ -128,7 +128,7 @@ void irys::WifiHandler::connectToAccessPoint(const QString &ssid) {
     // build up the "802-11-wireless" setting
     //connection["802-11-wireless"];
     // tell which ssid should be chosen
-    connection["802-11-wireless"]["ssid"] = "TP-LINK_CD5DC8";
+    connection["802-11-wireless"]["ssid"] = QByteArray("TP-LINK_CD5DC8");
     // choose connection mode - adhoc - connect to existing access point
     connection["802-11-wireless"]["mode"] = "infrastructure";
     connection["802-11-wireless"]["security"] = "802-11-wireless-security";
@@ -136,6 +136,7 @@ void irys::WifiHandler::connectToAccessPoint(const QString &ssid) {
     connection["802-1x"]["eap"] = QVariant(QList<QString>({QStringLiteral("tls")}));
     connection["802-1x"]["identity"] = "code with dbus";
     connection["802-1x"]["private-key-password"] = "20520335";
+    //connection["802-1x"]["client-cert"] =
 
     // start the connection
     QDBusReply<QDBusObjectPath> result = nmsettings->call("AddConnection",

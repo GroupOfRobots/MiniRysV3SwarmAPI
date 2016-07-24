@@ -12,6 +12,7 @@
 #include <QNetworkConfiguration>
 #include <QNetworkConfigurationManager>
 #include <QNetworkSession>
+#include <QByteArray>
 
 #include <memory>
 #include "exceptions.h"

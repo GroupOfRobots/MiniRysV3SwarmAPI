@@ -1,27 +1,47 @@
 #include "api.h"
 
 irys::API::API()
-    : m_Server(new QWebSocketServer(
-                   QStringLiteral("Server name"),
-                   QWebSocketServer::SecureMode, this)) {
-
+    : m_webSocketServer(
+          new QWebSocketServer(
+              QStringLiteral("IRys WebSocket Server"),
+              QWebSocketServer::NonSecureMode, this)) {
+    if (m_webSocketServer->listen(QHostAddress::Any, 8888)) {
+        qDebug() << "Echoserver listening on port" << 8888;
+    }
+    connect(m_webSocketServer, &QWebSocketServer::newConnection,
+            this, &API::onNewConnection);
+    connect(m_webSocketServer, &QWebSocketServer::closed,
+            this, &API::serverClosed);
 }
 
-irys::API::~API() { }
+irys::API::~API() {
+    m_webSocketServer->close();
+    qDeleteAll(m_robotsSockets.begin(), m_robotsSockets.end());
+}
 
 void irys::API::sendDataToEachRobot(QByteArray data) {
 
 }
 
 void irys::API::onNewConnection() {
-
+    QWebSocket *pSocket = m_webSocketServer->nextPendingConnection();
+    connect(pSocket, &QWebSocket::binaryMessageReceived,
+            this, &API::processReceivedData);
+    connect(pSocket, &QWebSocket::disconnected,
+            this, &API::robotSocketDisconnected);
+    m_robotsSockets << pSocket;
 }
 
 void irys::API::processReceivedData(QByteArray data) {
-
+    qDebug() << "Received: " << data;
 }
 
 void irys::API::robotSocketDisconnected() {
-
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    qDebug() << "Socket Disconnected: " << pClient;
+    if (pClient) {
+        m_robotsSockets.removeAll(pClient);
+        pClient->deleteLater();
+    }
 }
 

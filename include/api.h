@@ -9,7 +9,7 @@
 
 namespace irys {
 
-class API : protected QObject {
+class API : public QObject {
     Q_OBJECT
 public:
     API();
@@ -38,9 +38,9 @@ private Q_SLOTS:
 private:
     // wsockets side should be separated!
     QWebSocket m_webSocket;
-    QWebSocketServer *m_Server;
+    QWebSocketServer *m_webSocketServer;
     // websocket assigned to robot's id
-    QMap<int, QWebSocket *> m_robotsSockets;
+    QList<QWebSocket *> m_robotsSockets;
 };
 
 }
