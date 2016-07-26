@@ -17,11 +17,14 @@ public:
 
     /// Sends byte-array to the specific robot with passed id.
     /// Throws DataTransferToRobotUnsuccessful.
-    void sendDataToRobotWithId(int id, QByteArray data);
+    void sendDataToRobotWithId(int id, const QByteArray &data);
 
     /// Sends byte-array to each robot.
     /// Throws DataTransferToRobotUnsuccessful.
-    void sendDataToEachRobot(QByteArray data);
+    void sendDataToEachRobot(const QByteArray &data);
+
+    /// Sends string to each robot
+    void sendTextToEachRobot(const QString &text);
 
 Q_SIGNALS:
     /// Signal emited after websocket server closure.
@@ -32,14 +35,14 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onNewConnection();
-    void processReceivedData(QByteArray data);
+    void processReceivedData(const QByteArray &data);
+    void processReceivedText(const QString &text);
     void robotSocketDisconnected();
 
 private:
     // wsockets side should be separated!
     QWebSocket m_webSocket;
     QWebSocketServer *m_webSocketServer;
-    // websocket assigned to robot's id
     QList<QWebSocket *> m_robotsSockets;
 };
 
