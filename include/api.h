@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QWebSocket>
 #include <QWebSocketServer>
+#include <functional>
 #include <iostream>
 
 namespace irys {
@@ -16,11 +17,9 @@ public:
     virtual ~API();
 
     /// Sends byte-array to the specific robot with passed id.
-    /// Throws DataTransferToRobotUnsuccessful.
     void sendDataToRobotWithId(int id, const QByteArray &data);
 
     /// Sends byte-array to each robot.
-    /// Throws DataTransferToRobotUnsuccessful.
     void sendDataToEachRobot(const QByteArray &data);
 
     /// Sends string to each robot

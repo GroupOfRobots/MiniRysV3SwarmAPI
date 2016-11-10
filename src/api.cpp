@@ -5,7 +5,8 @@ irys::API::API()
           new QWebSocketServer(
               QStringLiteral("IRys WebSocket Server"),
               QWebSocketServer::NonSecureMode,
-              this)) {
+              this))
+{
     if (m_webSocketServer->listen(QHostAddress::Any, 8888)) {
         qDebug() << "Echoserver listening on port" << 8888;
     }

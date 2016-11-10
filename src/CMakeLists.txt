@@ -1,5 +1,6 @@
 # search for source files in current dir
 aux_source_directory(. lib_SRC_LIST)
+add_definitions(-std=c++14)
 
 # include include dir
 include_directories(${RobotSwarmAPI_SOURCE_DIR}/include)
