@@ -5,8 +5,8 @@ irys::API::API()
           new QWebSocketServer(
               QStringLiteral("IRys WebSocket Server"),
               QWebSocketServer::NonSecureMode, this)) {
-    if (m_webSocketServer->listen(QHostAddress::Any, 8888)) {
-        qDebug() << "Echoserver listening on port" << 8888;
+    if (m_webSocketServer->listen(QHostAddress::Any, 8080)) {
+        qDebug() << "Echoserver listening on port" << 8080;
     }
     connect(m_webSocketServer, &QWebSocketServer::newConnection,
             this, &API::onNewConnection);
@@ -27,13 +27,22 @@ void irys::API::onNewConnection() {
     QWebSocket *pSocket = m_webSocketServer->nextPendingConnection();
     connect(pSocket, &QWebSocket::binaryMessageReceived,
             this, &API::processReceivedData);
+    connect(pSocket, &QWebSocket::textMessageReceived,
+            this, &API::processReceivedMessage);
     connect(pSocket, &QWebSocket::disconnected,
             this, &API::robotSocketDisconnected);
     m_robotsSockets << pSocket;
+    qDebug() << "connection!";
+    pSocket->sendTextMessage("lololol");
 }
 
 void irys::API::processReceivedData(QByteArray data) {
     qDebug() << "Received: " << data;
+}
+
+
+void irys::API::processReceivedMessage(QString data) {
+    qDebug() << data;
 }
 
 void irys::API::robotSocketDisconnected() {

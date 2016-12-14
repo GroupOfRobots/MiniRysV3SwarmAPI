@@ -32,6 +32,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onNewConnection();
+    void processReceivedMessage(QString data);
     void processReceivedData(QByteArray data);
     void robotSocketDisconnected();
 
