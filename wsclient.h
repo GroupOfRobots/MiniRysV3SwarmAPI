@@ -18,7 +18,8 @@ class WSClient
     std::unique_ptr<easywsclient::WebSocket> ws;
 public:
     WSClient();
-    void processMessage();
+    void processReceivedRobotStatus();
+    void sendToEachRobot(const RobotStatus &rs);
 };
 
 } // namespace api

@@ -12,7 +12,8 @@ public:
     virtual ~API();
 
     /// Sends byte-array to the specific robot with passed id.
-    void sendDataToRobotWithId(int id, const char *data);
+    // TODO:
+    //void sendDataToRobotWithId(int id, const char *data);
 
     /// Sends byte-array to each robot.
     void sendDataToEachRobot(const char *data);
