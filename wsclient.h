@@ -5,20 +5,33 @@
 #include "robotstatus.h"
 #include <memory>
 #include <iostream>
+#include <condition_variable>
+#include <thread>
+#include <mutex>
+#include <queue>
+#include <future>
 
 namespace irys {
 namespace api {
 
 class WSClient
 {
-#ifdef _WIN32
-    INT rc;
-    WSADATA wsaData;
-#endif
     std::unique_ptr<easywsclient::WebSocket> ws;
+
+    //std::thread dispatcher;
+    std::future<void> dispatcher;
+    std::queue<RobotStatus> statusesToSend;
+    std::mutex statusesToSendMutex;
+    std::queue<RobotStatus> statusesReceived;
+    std::mutex statusesReceivedMutex;
 public:
     WSClient();
-    void processReceivedRobotStatus();
+    void sendStatus(const RobotStatus &rs);
+    RobotStatus popReceivedStatus();
+
+    // dispatcher func: has to be run in std::async
+    void dispatch();
+private:
     void sendToEachRobot(const RobotStatus &rs);
 };
 
