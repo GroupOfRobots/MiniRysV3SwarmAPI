@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
 //    wifi.scanForAccessPoints();
 //    wifi.getFoundAccessPoints();
 //    wifi.connectToAccessPoint("TP-LINK_CD5DC8");
-    irys::API *api = new irys::API;
-    QObject::connect(api, &irys::API::serverClosed, &a, &QCoreApplication::quit);
+    irys::Communicaton *api = new irys::Communicaton;
+    QObject::connect(api, &irys::Communicaton::serverClosed, &a, &QCoreApplication::quit);
     return a.exec();
 }

@@ -7,17 +7,19 @@
 #include <QWebSocketServer>
 #include <iostream>
 
+#include "robotaddresses.h"
+
 namespace irys {
 
-class API : public QObject {
+class Communicaton : public QObject {
     Q_OBJECT
 public:
-    API();
-    virtual ~API();
+    Communicaton();
+    virtual ~Communicaton();
 
-    /// Sends byte-array to the specific robot with passed id.
-    /// Throws DataTransferToRobotUnsuccessful.
-    void sendDataToRobotWithId(int id, QByteArray data);
+    /// Sends byte-array to the specific robot with passed name.
+    /// Throws RobotDisconnected.
+    void sendDataToRobot(QString robotName, QByteArray data);
 
     /// Sends byte-array to each robot.
     /// Throws DataTransferToRobotUnsuccessful.
@@ -36,11 +38,11 @@ private Q_SLOTS:
     void robotSocketDisconnected();
 
 private:
-    // wsockets side should be separated!
-    QWebSocket m_webSocket;
-    QWebSocketServer *m_webSocketServer;
-    // websocket assigned to robot's id
-    QList<QWebSocket *> m_robotsSockets;
+    const RobotAddresses robotAddresses;
+
+    QWebSocketServer *thisRobotWebsocketServer;
+    QHash<QString, QWebSocket *> thisRobotWebsockets;
+    QHash<QString, QWebSocket *> receiverWebockets;
 };
 
 }

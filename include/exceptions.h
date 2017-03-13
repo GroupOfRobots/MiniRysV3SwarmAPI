@@ -2,6 +2,7 @@
 #define EXCEPTIONS_H
 
 #include <exception>
+#include <QString>
 
 namespace irys {
 
@@ -43,6 +44,13 @@ class GetAllAccessPointsFailed : public RuntimeError {
 public:
     GetAllAccessPointsFailed()
         : RuntimeError("Unable to get list of available access points")
+    { }
+};
+
+class RobotDisconnected : public RuntimeError {
+public:
+    RobotDisconnected(const QString robotName)
+        : RuntimeError(robotName + "disconnected")
     { }
 };
 

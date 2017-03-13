@@ -1,46 +1,46 @@
 #include "api.h"
 
-irys::API::API()
-    : m_webSocketServer(
+irys::Communicaton::Communicaton()
+    : thisRobotWebsocketServer(
           new QWebSocketServer(
               QStringLiteral("IRys WebSocket Server"),
               QWebSocketServer::NonSecureMode, this)) {
-    if (m_webSocketServer->listen(QHostAddress::Any, 8888)) {
+    if (thisRobotWebsocketServer->listen(QHostAddress::Any, 8888)) {
         qDebug() << "Echoserver listening on port" << 8888;
     }
-    connect(m_webSocketServer, &QWebSocketServer::newConnection,
-            this, &API::onNewConnection);
-    connect(m_webSocketServer, &QWebSocketServer::closed,
-            this, &API::serverClosed);
+    connect(thisRobotWebsocketServer, &QWebSocketServer::newConnection,
+            this, &Communicaton::onNewConnection);
+    connect(thisRobotWebsocketServer, &QWebSocketServer::closed,
+            this, &Communicaton::serverClosed);
 }
 
-irys::API::~API() {
-    m_webSocketServer->close();
-    qDeleteAll(m_robotsSockets.begin(), m_robotsSockets.end());
+irys::Communicaton::~Communicaton() {
+    thisRobotWebsocketServer->close();
+    qDeleteAll(receiverWebockets.begin(), receiverWebockets.end());
 }
 
-void irys::API::sendDataToEachRobot(QByteArray data) {
+void irys::Communicaton::sendDataToEachRobot(QByteArray data) {
 
 }
 
-void irys::API::onNewConnection() {
-    QWebSocket *pSocket = m_webSocketServer->nextPendingConnection();
+void irys::Communicaton::onNewConnection() {
+    QWebSocket *pSocket = thisRobotWebsocketServer->nextPendingConnection();
     connect(pSocket, &QWebSocket::binaryMessageReceived,
-            this, &API::processReceivedData);
+            this, &Communicaton::processReceivedData);
     connect(pSocket, &QWebSocket::disconnected,
-            this, &API::robotSocketDisconnected);
-    m_robotsSockets << pSocket;
+            this, &Communicaton::robotSocketDisconnected);
+    //receiverWebockets << pSocket;
 }
 
-void irys::API::processReceivedData(QByteArray data) {
+void irys::Communicaton::processReceivedData(QByteArray data) {
     qDebug() << "Received: " << data;
 }
 
-void irys::API::robotSocketDisconnected() {
+void irys::Communicaton::robotSocketDisconnected() {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     qDebug() << "Socket Disconnected: " << pClient;
     if (pClient) {
-        m_robotsSockets.removeAll(pClient);
+        //receiverWebockets.removeAll(pClient);
         pClient->deleteLater();
     }
 }
