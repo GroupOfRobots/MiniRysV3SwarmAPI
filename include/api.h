@@ -5,7 +5,9 @@
 #include <QMap>
 #include <QWebSocket>
 #include <QWebSocketServer>
+#include <QQueue>
 #include <iostream>
+#include <memory>
 
 #include "robotaddresses.h"
 #include "robotstatus.h"
@@ -46,13 +48,25 @@ private:
 
     QWebSocketServer *thisRobotWebsocketServer;
 
-    /// This sockets represent other robots sockets - they are used to transmit data
+    /// This sockets represent other robots sockets - they are used to receive data
     /// They are being managed by thisRobotWebsocketServer
-    QHash<int, QWebSocket *> otherRobotsSockets;
+    ///
+    /// represent others robots /masterSockets/
+    ///
+    /// if u have received sth - find sender address in this map!
+    QHash<int, QWebSocket *> slaveSockets;
 
     /// This sockets will receive data from other robot's servers
-    QHash<int, QWebSocket *> otherRobotsServers;
+    /// Sockets received from other robots!
+    ///
+    /// sockets created by THIS robot - are connected to others servers
+    ///
+    /// if u want to send sth - use this sockets!
+    QHash<int, std::unique_ptr<QWebSocket>> masterSockets;
 
     QQueue<RobotStatus> receivedStatuses;
-}
+};
+
+} // namespace irys
+
 #endif // API_H

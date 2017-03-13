@@ -12,6 +12,7 @@ find_package(Qt5DBus REQUIRED)
 
 # build API's library
 add_library(${PROJECT_NAME} ${lib_SRC_LIST} ${INCLUDE_ALL})
+add_definitions(-std=c++11)
 
 # link qt5 modules to API's library
 qt5_use_modules(${PROJECT_NAME} Core WebSockets Network DBus)
