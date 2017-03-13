@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "robotaddresses.h"
+#include "robotstatus.h"
 
 namespace irys {
 
@@ -19,7 +20,7 @@ public:
 
     /// Sends byte-array to the specific robot with passed name.
     /// Throws RobotDisconnected.
-    void sendDataToRobot(QString robotName, QByteArray data);
+    void sendDataToRobot(int robotId, QByteArray data);
 
     /// Sends byte-array to each robot.
     /// Throws DataTransferToRobotUnsuccessful.
@@ -30,7 +31,10 @@ Q_SIGNALS:
     void serverClosed();
 
     /// Signal emited after disconnection a robot with specific id.
-    void robotDisconnected(int id);
+    void robotDisconnected(int robotId);
+
+    /// Signal emited after receiving data from paricular robot
+    void dataReceived(int robotId);
 
 private Q_SLOTS:
     void onNewConnection();
@@ -38,12 +42,17 @@ private Q_SLOTS:
     void robotSocketDisconnected();
 
 private:
-    const RobotAddresses robotAddresses;
+    const RobotAddresses ROBOT_ADDRESSES;
 
     QWebSocketServer *thisRobotWebsocketServer;
-    QHash<QString, QWebSocket *> thisRobotWebsockets;
-    QHash<QString, QWebSocket *> receiverWebockets;
-};
 
+    /// This sockets represent other robots sockets - they are used to transmit data
+    /// They are being managed by thisRobotWebsocketServer
+    QHash<int, QWebSocket *> otherRobotsSockets;
+
+    /// This sockets will receive data from other robot's servers
+    QHash<int, QWebSocket *> otherRobotsServers;
+
+    QQueue<RobotStatus> receivedStatuses;
 }
 #endif // API_H
