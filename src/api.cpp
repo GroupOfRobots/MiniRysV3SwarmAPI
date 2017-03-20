@@ -29,6 +29,14 @@ void irys::SwarmServer::onNewConnection() {
             this, &SwarmServer::robotSocketDisconnected);
     robotsSockets << pSocket;
     qDebug() << "connection!";
+
+    int i = 10;
+    while (i--) {
+        RobotStatus rs;
+        rs.id = 12;
+        pSocket->sendBinaryMessage(QByteArray((char*)&rs, sizeof(RobotStatus)));
+        qDebug() << "Status sended";
+    }
 }
 
 void irys::SwarmServer::processReceivedData(QByteArray data) {

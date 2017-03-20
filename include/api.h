@@ -6,6 +6,7 @@
 #include <QWebSocket>
 #include <QWebSocketServer>
 #include <iostream>
+#include "robotstatus.h"
 
 namespace irys {
 
