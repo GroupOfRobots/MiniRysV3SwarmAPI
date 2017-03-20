@@ -15,7 +15,7 @@ public:
         for (auto it = ROBOTS_ID_WITH_IP_TAILS.cbegin(); it != ROBOTS_ID_WITH_IP_TAILS.cend(); ++it) {
             int robotId = it.key();
             int robotIpTail = it.value();
-            QString fullIpAddress = QStringLiteral("192.168.0.%1").arg(robotIpTail);
+            QString fullIpAddress = QStringLiteral("192.168.1.%1").arg(robotIpTail);
             addresses.insert(robotId, QHostAddress(fullIpAddress));
         }
     }
